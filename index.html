@@ -38,14 +38,28 @@
 
         /* Стили для кастомных текстовых подписей названий ПВЗ */
         .custom-tooltip {
-            background: rgba(17, 17, 17, 0.85) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: rgba(17, 17, 17, 0.9) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
             color: #fff !important;
             font-weight: bold;
             font-size: 11px;
             padding: 2px 6px;
             border-radius: 4px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            pointer-events: none; /* Чтобы подпись не мешала кликать по точке */
+        }
+
+        /* Управляем видимостью подписей через CSS на основе зума карты */
+        .leaflet-zoom-animated.custom-tooltip {
+            display: none;
+        }
+        /* Подписи показываются ТОЛЬКО на зуме 14 и выше */
+        .leaflet-zoom-14 .custom-tooltip,
+        .leaflet-zoom-15 .custom-tooltip,
+        .leaflet-zoom-16 .custom-tooltip,
+        .leaflet-zoom-17 .custom-tooltip,
+        .leaflet-zoom-18 .custom-tooltip {
+            display: block !important;
         }
     </style>
 </head>
@@ -63,15 +77,15 @@
             attribution: '© OpenStreetMap © CARTO'
         }).addTo(map);
 
-        // --- ПУНКТ 4: Граница Москвы (Чисто белая, контрастная) ---
+        // --- ПУНКТ 4: Граница Москвы (Белая, тонкая) ---
         fetch('moscow_border.geojson')
             .then(res => res.json())
             .then(geoJsonData => {
                 L.geoJSON(geoJsonData, {
                     style: {
-                        color: "#ffffff",      // Белая линия
-                        weight: 2,             // Чуть увеличили толщину для четкости
-                        opacity: 0.95,         // Практически непрозрачная
+                        color: "#ffffff",      // Чисто белый
+                        weight: 1,             // Тонкая изящная линия
+                        opacity: 0.8,          // Легкая прозрачность
                         fillColor: "transparent"
                     }
                 }).addTo(map);
@@ -81,11 +95,8 @@
         // Инициализируем слой кластеризации (ПУНКТ 3)
         var markersCluster = L.markerClusterGroup({
             showCoverageOnHover: false,
-            maxClusterRadius: 45 // Радиус группировки в пикселях
+            maxClusterRadius: 45
         });
-
-        // Массив для хранения ссылок на подписи, чтобы управлять ими при зуме
-        var tooltipsList = [];
 
         // --- ПУНКТЫ 1, 2, 5, 6: Загрузка и стилизация точек СДЭК ---
         fetch('cdek_points.geojson')
@@ -101,7 +112,7 @@
                             markerColor = "#ffee00";
                         }
 
-                        // ПУНКТ 6: Размер уменьшен на 10% (radius: 4.5)
+                        // ПУНКТ 6: Размер уменьшен на 10% (radius: 4.5 вместо 5)
                         var marker = L.circleMarker(latlng, {
                             radius: 4.5,
                             fillColor: markerColor,
@@ -111,9 +122,9 @@
                             fillOpacity: 0.9
                         });
 
-                        // ПУНКТ 1: Привязываем подпись с кодом ПВЗ
+                        // ПУНКТ 1: Привязываем постоянную подпись с кодом пункта
                         if (feature.properties && feature.properties.Code) {
-                            marker.bindTooltip(feature.properties.Code, {
+                            marker.bindTooltip(String(feature.properties.Code), {
                                 permanent: true, 
                                 direction: 'top',
                                 offset: [0, -5],
@@ -136,43 +147,14 @@
                                 </div>
                             `;
                             layer.bindPopup(popup);
-
-                            // Сразу после создания слоя собираем внутренние тултипы для генерализации
-                            layer.on('add', function() {
-                                if (layer.getTooltip()) {
-                                    tooltipsList.push(layer.getTooltip());
-                                    // Вызываем проверку видимости подписи при старте
-                                    toggleTooltipVisibility(layer.getTooltip(), map.getZoom());
-                                }
-                            });
                         }
                     }
                 });
 
-                // Добавляем созданные точки в кластер, а сам кластер — на карту
+                // Добавляем точки в кластер и на карту
                 markersCluster.addLayer(pointsLayer);
                 map.addLayer(markersCluster);
             }).catch(err => console.error("Ошибка загрузки точек:", err));
-
-
-        // ПУНКТ 1: Функция генерализации подписей в зависимости от Zoom
-        function toggleTooltipVisibility(tooltip, currentZoom) {
-            if (!tooltip || !tooltip._container) return;
-            // Подписи плавно показываются только на масштабе 13 и крупнее
-            if (currentZoom >= 13) {
-                tooltip._container.style.display = 'block';
-            } else {
-                tooltip._container.style.display = 'none';
-            }
-        }
-
-        // Отслеживаем изменение масштаба карты для скрытия/показа подписей
-        map.on('zoomend', function() {
-            var currentZoom = map.getZoom();
-            tooltipsList.forEach(function(tooltip) {
-                toggleTooltipVisibility(tooltip, currentZoom);
-            });
-        });
 
         // Обработка кнопки скачивания
         document.getElementById('downloadSample').addEventListener('click', function() {
