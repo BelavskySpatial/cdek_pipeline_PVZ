@@ -64,7 +64,7 @@
             attribution: '© OpenStreetMap © CARTO'
         }).addTo(map);
 
-        // --- ПУНКТ 4: Граница Москвы (Белая, тонкая нить) ---
+        // --- Граница Москвы (Белая, тонкая нить) ---
         fetch('moscow_border.geojson')
             .then(res => res.json())
             .then(geoJsonData => {
@@ -78,45 +78,43 @@
                 }).addTo(map);
             }).catch(err => console.error("Ошибка загрузки границы:", err));
 
-        // Инициализируем слой кластеризации (ПУНКТ 3)
+        // Инициализируем слой кластеризации
         var markersCluster = L.markerClusterGroup({
             showCoverageOnHover: false,
             maxClusterRadius: 45
         });
 
-        // Массив для хранения ссылок на все маркеры для динамических подписей
         var allMarkers = [];
 
-        // --- ПУНКТЫ 1, 2, 5, 6: Загрузка и стилизация точек СДЭК ---
+        // --- Загрузка и стилизация точек СДЭК ---
         fetch('cdek_points.geojson')
             .then(res => res.json())
             .then(geoJsonData => {
                 var pointsLayer = L.geoJSON(geoJsonData, {
                     pointToLayer: function (feature, latlng) {
-                        // Принудительно очищаем строку от пробелов и переводим в ВЕРХНИЙ регистр
-                        var itemType = feature.properties.type ? String(feature.properties.type).trim().toUpperCase() : '';
+                        // Очищаем строку от невидимого мусора и переводим в верхний регистр
+                        var rawType = feature.properties.type ? String(feature.properties.type) : '';
+                        var cleanType = rawType.replace(/[\s\u200B-\u200D\uFEFF]/g, '').toUpperCase();
                         
-                        // ПУНКТ 2 и 5: Ярко-красный по умолчанию для PVZ
+                        // По умолчанию ярко-красный для ПВЗ
                         var markerColor = "#ff0044"; 
-                        var strokeColor = "#000000"; // Черный контур для контраста
+                        var strokeColor = "#ff0044"; 
                         
-                        // Если в типе данных есть упоминание постомата
-                        if (itemType === 'POSTOMAT' || itemType.includes('POSTOMAT')) {
-                            markerColor = "#ffee00"; // Электрический желтый
-                            strokeColor = "#ffee00"; // Желтый контур, чтобы точка не казалась красной из-за обводки
+                        // Проверяем ОБА варианта написания: POSTAMAT (как в данных) и POSTOMAT
+                        if (cleanType.indexOf('POSTAMAT') !== -1 || cleanType.indexOf('POSTOMAT') !== -1) {
+                            markerColor = "#ffee00"; // Ярко-желтый
+                            strokeColor = "#ffee00"; 
                         }
 
-                        // ПУНКТ 6: Размер уменьшен на 10% (radius: 4.5)
                         var marker = L.circleMarker(latlng, {
                             radius: 4.5,
                             fillColor: markerColor,
                             color: strokeColor, 
-                            weight: 1,
+                            weight: 1.5, 
                             opacity: 1,
-                            fillOpacity: 0.9
+                            fillOpacity: 0.95
                         });
 
-                        // ПУНКТ 1: Извлекаем код и тип из правильных строчных полей JSON
                         var code = feature.properties.code || 'Без названия';
                         var type = feature.properties.type || 'Не указан';
                         
@@ -129,7 +127,6 @@
                         `;
                         marker.bindPopup(popupContent);
 
-                        // Сохраняем код внутри объекта маркера для управления видимостью подписей
                         marker.cdekCode = code;
                         allMarkers.push(marker);
 
@@ -137,20 +134,17 @@
                     }
                 });
 
-                // Добавляем точки в кластер и выводим на карту
                 markersCluster.addLayer(pointsLayer);
                 map.addLayer(markersCluster);
                 
-                // Первичный расчет видимости подписей при загрузке
                 updateLabelsVisibility();
             }).catch(err => console.error("Ошибка загрузки точек:", err));
 
-        // ПУНКТ 1: Функция управления видимостью подписей в зависимости от масштаба
+        // Функция управления подписями в зависимости от масштаба
         function updateLabelsVisibility() {
             var currentZoom = map.getZoom();
             
             allMarkers.forEach(function(marker) {
-                // Подписи красиво включаются на зуме 14 и крупнее (уровень улиц)
                 if (currentZoom >= 14) {
                     if (!marker.getTooltip()) {
                         marker.bindTooltip(String(marker.cdekCode), {
@@ -161,7 +155,6 @@
                         });
                     }
                 } else {
-                    // На общем масштабе убираем подписи, чтобы не захламлять карту
                     if (marker.getTooltip()) {
                         marker.unbindTooltip();
                     }
@@ -169,10 +162,8 @@
             });
         }
 
-        // Отслеживаем изменение зума карты для генерализации подписей
         map.on('zoomend', updateLabelsVisibility);
 
-        // Обработка клика по кнопке скачивания
         document.getElementById('downloadSample').addEventListener('click', function() {
             window.location.href = 'cdek_sample_full.csv';
         });
