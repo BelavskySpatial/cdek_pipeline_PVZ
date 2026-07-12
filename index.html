@@ -93,22 +93,24 @@
             .then(geoJsonData => {
                 var pointsLayer = L.geoJSON(geoJsonData, {
                     pointToLayer: function (feature, latlng) {
-                        // Приводим к верхнему регистру строку из нижнего регистра JSON ('type')
+                        // Принудительно очищаем строку от пробелов и переводим в ВЕРХНИЙ регистр
                         var itemType = feature.properties.type ? String(feature.properties.type).trim().toUpperCase() : '';
                         
                         // ПУНКТ 2 и 5: Ярко-красный по умолчанию для PVZ
                         var markerColor = "#ff0044"; 
+                        var strokeColor = "#000000"; // Черный контур для контраста
                         
-                        // Если в типе данных указан постомат
-                        if (itemType === 'POSTOMAT') {
+                        // Если в типе данных есть упоминание постомата
+                        if (itemType === 'POSTOMAT' || itemType.includes('POSTOMAT')) {
                             markerColor = "#ffee00"; // Электрический желтый
+                            strokeColor = "#ffee00"; // Желтый контур, чтобы точка не казалась красной из-за обводки
                         }
 
                         // ПУНКТ 6: Размер уменьшен на 10% (radius: 4.5)
                         var marker = L.circleMarker(latlng, {
                             radius: 4.5,
                             fillColor: markerColor,
-                            color: "#000000",
+                            color: strokeColor, 
                             weight: 1,
                             opacity: 1,
                             fillOpacity: 0.9
