@@ -1,0 +1,18 @@
+{
+"type": "FeatureCollection",
+"name": "Sample_SDEK",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Свободы, 59" }, "geometry": { "type": "Point", "coordinates": [ 37.450534, 55.853103 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Нелидовская, 25, корпус 1" }, "geometry": { "type": "Point", "coordinates": [ 37.433858, 55.845658 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "Ул. Героев Панфиловцев, 13, корп.3" }, "geometry": { "type": "Point", "coordinates": [ 37.428612, 55.856659 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Героев Панфиловцев, 1А" }, "geometry": { "type": "Point", "coordinates": [ 37.438224, 55.851566 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Туристская, 27, корп. 1" }, "geometry": { "type": "Point", "coordinates": [ 37.419925, 55.85574 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "б-р Яна Райниса, 14к1" }, "geometry": { "type": "Point", "coordinates": [ 37.420491, 55.849378 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Вилиса Лациса, 13, корп. 1" }, "geometry": { "type": "Point", "coordinates": [ 37.425495, 55.863899 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Планерная, 7" }, "geometry": { "type": "Point", "coordinates": [ 37.434882, 55.862984 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Фомичёвой, 13, корп. 1" }, "geometry": { "type": "Point", "coordinates": [ 37.44067, 55.855923 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "б-р Яна Райниса, 31" }, "geometry": { "type": "Point", "coordinates": [ 37.418651, 55.847974 ] } },
+{ "type": "Feature", "properties": { "run_id": "Run_2026-07-10_140535", "global_amount_all": 10538, "global_amount_pvz": 9932, "global_amount_postamat": 606, "cityCode": 44, "address": "ул. Планерная, 14, корп. 1" }, "geometry": { "type": "Point", "coordinates": [ 37.436849, 55.864111 ] } }
+]
+}
