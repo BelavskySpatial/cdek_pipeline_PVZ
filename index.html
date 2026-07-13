@@ -95,7 +95,8 @@
 </head>
 <body>
 
-    <button class="download-btn" id="downloadSample">Скачать образец данных (.csv)</button>
+    <!-- Изменено: профессиональное название кнопки под формат специалистов -->
+    <button class="download-btn" id="downloadSample">Скачать образец (.geojson)</button>
     <div id="map"></div>
 
     <script>
@@ -107,7 +108,7 @@
             attribution: '© OpenStreetMap © CARTO'
         }).addTo(map);
 
-        // --- Граница Москвы (Белая, thin line) ---
+        // --- Граница Москвы (Белая, тонкая нить) ---
         fetch('moscow_border.geojson')
             .then(res => res.json())
             .then(geoJsonData => {
@@ -141,6 +142,7 @@
                         var markerColor = "#ff0044"; 
                         var strokeColor = "#ff0044"; 
                         
+                        // Проверяем оба написания с учетом найденной опечатки
                         if (cleanType.indexOf('POSTAMAT') !== -1 || cleanType.indexOf('POSTOMAT') !== -1) {
                             markerColor = "#ffee00"; 
                             strokeColor = "#ffee00"; 
@@ -227,9 +229,9 @@
 
         legend.addTo(map);
 
-        // Обработка клика по кнопке скачивания
+        // Изменено: теперь кнопка запрашивает файл cdek_sample.geojson
         document.getElementById('downloadSample').addEventListener('click', function() {
-            window.location.href = 'cdek_sample_full.csv';
+            window.location.href = 'cdek_sample.geojson';
         });
     </script>
 </body>
