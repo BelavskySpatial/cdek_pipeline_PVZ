@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CDEK Last-Mile Infrastructure Map</title>
 
+    <!-- Яндекс Метрика (Счетчик посещений и целей) -->
+    <!-- Замени XXXXXX на реальный номер счетчика из кабинета Яндекс Метрики -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < e.scripts.length; j++) {if (e.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(110637124, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/110637124" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
     <!-- Подключаем стили и скрипты Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -95,7 +113,6 @@
 </head>
 <body>
 
-    <!-- Изменено: профессиональное название кнопки под формат специалистов -->
     <button class="download-btn" id="downloadSample">Скачать образец (.geojson)</button>
     <div id="map"></div>
 
@@ -108,7 +125,7 @@
             attribution: '© OpenStreetMap © CARTO'
         }).addTo(map);
 
-        // --- Граница Москвы (Белая, тонкая нить) ---
+        // --- Граница Москвы ---
         fetch('moscow_border.geojson')
             .then(res => res.json())
             .then(geoJsonData => {
@@ -142,7 +159,6 @@
                         var markerColor = "#ff0044"; 
                         var strokeColor = "#ff0044"; 
                         
-                        // Проверяем оба написания с учетом найденной опечатки
                         if (cleanType.indexOf('POSTAMAT') !== -1 || cleanType.indexOf('POSTOMAT') !== -1) {
                             markerColor = "#ffee00"; 
                             strokeColor = "#ffee00"; 
@@ -206,9 +222,8 @@
 
         map.on('zoomend', updateLabelsVisibility);
 
-        // --- Добавление легенды на карту ---
+        // --- Добавление легенды ---
         var legend = L.control({ position: 'bottomleft' });
-
         legend.onAdd = function (map) {
             var div = L.DomUtil.create('div', 'legend');
             div.innerHTML = `
@@ -226,12 +241,22 @@
             `;
             return div;
         };
-
         legend.addTo(map);
 
-        // Изменено: теперь кнопка запрашивает файл cdek_sample.geojson
+        // --- Исправленный принудительный метод скачивания файла ---
         document.getElementById('downloadSample').addEventListener('click', function() {
-            window.location.href = 'cdek_sample.geojson';
+            // Отправляем цель в Яндекс Метрику (сработает, когда вставишь свой ID вместо XXXXXX)
+            if (typeof ym === 'function') {
+                ym(110637124, 'reachGoal', 'download_sample_click');
+            }
+
+            // Создаем виртуальную ссылку для принудительной загрузки файла в папку "Загрузки"
+            var link = document.createElement('a');
+            link.href = 'cdek_sample.geojson';
+            link.download = 'cdek_sample.geojson'; // Этот атрибут заставляет браузер скачивать, а не открывать текст
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         });
     </script>
 </body>
